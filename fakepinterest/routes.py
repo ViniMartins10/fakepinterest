@@ -12,7 +12,7 @@ def homepage():
     form_login = FormLogin()
     if form_login.validate_on_submit(): # preencheu os campo de login de forma valida
         usuario = Usuario.query.filter_by(email=form_login.email.data).first() #vai ter que procurar o usuario da mesma forma que foi feito no forms def validate_email()
-        if usuario and  bcrypt.check_password_hash(usuario.senha, form_login.senha.data) :    #se achou o usuário e # vai verificar se a senha bate, a criptografada e a senha passada no formulario     
+        if usuario and  bcrypt.check_password_hash(usuario.senha.encode("utf-8"), form_login.senha.data) :    #se achou o usuário e # vai verificar se a senha bate, a criptografada e a senha passada no formulario     
             login_user(usuario)
             return redirect(url_for("perfil", id_usuario=usuario.id))
     return render_template("homepage.html", form=form_login)#passando o formulario para o html
@@ -22,7 +22,7 @@ def homepage():
 def criarconta():
     form_criarconta = FormCriarConta()
     if form_criarconta.validate_on_submit(): #ele verifica se o usuario já clicou no botão e se todos os campos estão preenchidos e as validações foram aplicadas
-        senha = bcrypt.generate_password_hash(form_criarconta.senha.data)#criptografa a senha do usuário
+        senha = bcrypt.generate_password_hash(form_criarconta.senha.data).decode("utf-8")#criptografa a senha do usuário
         # bcrypt.check_password_hash(senha) // vê se a senha
         usuario=Usuario(username=form_criarconta.username.data, #Usuario vem da classe Usuario da Models
                         senha= senha,
